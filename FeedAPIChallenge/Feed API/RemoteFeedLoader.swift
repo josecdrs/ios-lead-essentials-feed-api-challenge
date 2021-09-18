@@ -23,14 +23,43 @@ public final class RemoteFeedLoader: FeedLoader {
 			switch result {
 			case .failure:
 				completion(.failure(Error.connectivity))
-			case let .success((_, urlResponse)):
+			case let .success((data, urlResponse)):
 				guard urlResponse.statusCode == 200 else {
 					completion(.failure(Error.invalidData))
 					return
 				}
 
-				completion(.failure(Error.invalidData))
+				do {
+					_ = try JSONDecoder().decode([APIFeedImage].self, from: data)
+				} catch {
+					completion(.failure(Error.invalidData))
+				}
 			}
 		}
+	}
+}
+
+// MARK: - APIFeedImage
+
+public struct APIFeedImage: Hashable {
+	public let id: UUID
+	public let description: String?
+	public let location: String?
+	public let url: URL
+
+	public init(id: UUID, description: String?, location: String?, url: URL) {
+		self.id = id
+		self.description = description
+		self.location = location
+		self.url = url
+	}
+}
+
+extension APIFeedImage: Decodable {
+	enum CodingKeys: String, CodingKey {
+		case id = "image_id"
+		case description = "image_desc"
+		case location = "image_loc"
+		case url = "image_url"
 	}
 }
