@@ -30,8 +30,8 @@ public final class RemoteFeedLoader: FeedLoader {
 				}
 
 				do {
-					_ = try JSONDecoder().decode(APIFeedImageResponse.self, from: data)
-					completion(.success([]))
+					let decoded = try JSONDecoder().decode(APIFeedImageResponse.self, from: data)
+					completion(.success(decoded.items.map { $0.mapToFeedImage() }))
 				} catch {
 					completion(.failure(Error.invalidData))
 				}
@@ -64,5 +64,12 @@ struct APIFeedImage: Decodable {
 		self.description = description
 		self.location = location
 		self.url = url
+	}
+
+	func mapToFeedImage() -> FeedImage {
+		FeedImage(id: id,
+		          description: description,
+		          location: location,
+		          url: url)
 	}
 }
