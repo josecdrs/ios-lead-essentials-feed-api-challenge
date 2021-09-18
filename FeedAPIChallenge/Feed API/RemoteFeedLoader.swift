@@ -30,7 +30,8 @@ public final class RemoteFeedLoader: FeedLoader {
 				}
 
 				do {
-					_ = try JSONDecoder().decode([APIFeedImage].self, from: data)
+					_ = try JSONDecoder().decode(APIFeedImageResponse.self, from: data)
+					completion(.success([]))
 				} catch {
 					completion(.failure(Error.invalidData))
 				}
@@ -40,6 +41,10 @@ public final class RemoteFeedLoader: FeedLoader {
 }
 
 // MARK: - APIFeedImage
+
+struct APIFeedImageResponse: Decodable {
+	let items: [APIFeedImage]
+}
 
 public struct APIFeedImage: Hashable {
 	public let id: UUID
