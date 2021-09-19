@@ -34,6 +34,8 @@ struct FeedItemsMapper {
 		}
 	}
 
+	private init() {}
+
 	static func decode(_ data: Data, _ response: HTTPURLResponse) -> FeedLoader.Result {
 		guard
 			response.statusCode == OK_200,
