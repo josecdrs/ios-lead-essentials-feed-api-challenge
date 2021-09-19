@@ -25,23 +25,21 @@ public final class RemoteFeedLoader: FeedLoader {
 			case .failure:
 				completion(.failure(Error.connectivity))
 			case let .success((data, urlResponse)):
-				guard urlResponse.statusCode == 200 else {
-					completion(.failure(Error.invalidData))
-					return
-				}
-
-				self?.decodeAndComplete(data, completion: completion)
+				self?.decodeAndComplete(data, urlResponse, completion: completion)
 			}
 		}
 	}
 
-	private func decodeAndComplete(_ data: Data, completion: (FeedLoader.Result) -> Void) {
-		do {
-			let decoded = try JSONDecoder().decode(APIFeedImageResponse.self, from: data)
-			completion(.success(decoded.items.map { $0.mapToFeedImage() }))
-		} catch {
+	private func decodeAndComplete(_ data: Data, _ response: HTTPURLResponse, completion: (FeedLoader.Result) -> Void) {
+		guard
+			response.statusCode == 200,
+			let decoded = try? JSONDecoder().decode(APIFeedImageResponse.self, from: data)
+		else {
 			completion(.failure(Error.invalidData))
+			return
 		}
+
+		completion(.success(decoded.items.map { $0.mapToFeedImage() }))
 	}
 }
 
