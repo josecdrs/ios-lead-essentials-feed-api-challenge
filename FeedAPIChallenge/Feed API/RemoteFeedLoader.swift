@@ -65,13 +65,6 @@ private struct APIFeedImage: Decodable {
 		case url = "image_url"
 	}
 
-	init(id: UUID, description: String?, location: String?, url: URL) {
-		self.id = id
-		self.description = description
-		self.location = location
-		self.url = url
-	}
-
 	func mapToFeedImage() -> FeedImage {
 		FeedImage(id: id,
 		          description: description,
