@@ -47,11 +47,11 @@ public final class RemoteFeedLoader: FeedLoader {
 
 // MARK: - APIFeedImage
 
-struct APIFeedImageResponse: Decodable {
+private struct APIFeedImageResponse: Decodable {
 	let items: [APIFeedImage]
 }
 
-struct APIFeedImage: Decodable {
+private struct APIFeedImage: Decodable {
 	let id: UUID
 	let description: String?
 	let location: String?
