@@ -8,7 +8,7 @@ public final class RemoteFeedLoader: FeedLoader {
 	private let url: URL
 	private let client: HTTPClient
 
-	private var OK_200: Int {
+	static var OK_200: Int {
 		200
 	}
 
@@ -29,21 +29,20 @@ public final class RemoteFeedLoader: FeedLoader {
 			case .failure:
 				completion(.failure(Error.connectivity))
 			case let .success((data, urlResponse)):
-				self?.decodeAndComplete(data, urlResponse, completion: completion)
+				completion(RemoteFeedLoader.decode(data, urlResponse))
 			}
 		}
 	}
 
-	private func decodeAndComplete(_ data: Data, _ response: HTTPURLResponse, completion: (FeedLoader.Result) -> Void) {
+	private static func decode(_ data: Data, _ response: HTTPURLResponse) -> FeedLoader.Result {
 		guard
 			response.statusCode == OK_200,
 			let decoded = try? JSONDecoder().decode(APIFeedImageResponse.self, from: data)
 		else {
-			completion(.failure(Error.invalidData))
-			return
+			return .failure(Error.invalidData)
 		}
 
-		completion(.success(decoded.items.map { $0.mapToFeedImage() }))
+		return .success(decoded.items.map { $0.mapToFeedImage() })
 	}
 }
 
