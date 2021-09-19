@@ -36,7 +36,7 @@ struct FeedItemsMapper {
 
 	private init() {}
 
-	static func decode(_ data: Data, _ response: HTTPURLResponse) -> FeedLoader.Result {
+	static func map(_ data: Data, _ response: HTTPURLResponse) -> FeedLoader.Result {
 		guard
 			response.statusCode == OK_200,
 			let decoded = try? JSONDecoder().decode(APIFeedImageResponse.self, from: data)
