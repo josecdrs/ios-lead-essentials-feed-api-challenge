@@ -30,13 +30,17 @@ public final class RemoteFeedLoader: FeedLoader {
 					return
 				}
 
-				do {
-					let decoded = try JSONDecoder().decode(APIFeedImageResponse.self, from: data)
-					completion(.success(decoded.items.map { $0.mapToFeedImage() }))
-				} catch {
-					completion(.failure(Error.invalidData))
-				}
+				self?.decodeAndComplete(data, completion: completion)
 			}
+		}
+	}
+
+	private func decodeAndComplete(_ data: Data, completion: (FeedLoader.Result) -> Void) {
+		do {
+			let decoded = try JSONDecoder().decode(APIFeedImageResponse.self, from: data)
+			completion(.success(decoded.items.map { $0.mapToFeedImage() }))
+		} catch {
+			completion(.failure(Error.invalidData))
 		}
 	}
 }
